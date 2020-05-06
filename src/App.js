@@ -1,9 +1,10 @@
 import React from 'react';
+import {Button} from 'antd'
 
 function App() {
   return (
     <div className="App">
-      hello 
+      <Button type="primary">成功</Button>
     </div>
   );
 }
