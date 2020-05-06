@@ -16,7 +16,7 @@ function App() {
       <Switch>
         <Route path="/home" component={Home}></Route>
         <Route path="/login" component={Login}></Route>
-        <Redirect exact from="/" to="/home"></Redirect>
+        <Redirect exact from="/" to="/login"></Redirect>
         <Route path="*" component={Page404}></Route>
       </Switch>
     </Router>
