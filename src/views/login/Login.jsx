@@ -3,6 +3,7 @@ import { Form, Input, Button, Checkbox, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import "./login.style.scss";
 import { post } from "../../utils/http";
+import {withRouter} from 'react-router-dom'
 
 class Login extends Component {
   constructor() {
@@ -123,4 +124,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default withRouter(Login);
