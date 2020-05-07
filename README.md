@@ -1,68 +1,29 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 实现的功能
 
-## Available Scripts
+1. 登录，登出 (redux 管理用户登录的状态)
+2. 路由权限验证(如果直接访问首页,在没有登录时会跳转到 登录页面 )
+3. 记住密码功能
 
-In the project directory, you can run:
+## 遇到的问题
 
-### `yarn start`
+#### 1. antd 表单组件双向绑定的问题
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+描述: 在绑定数据的时候，使用了 onChange 和 value 的这种方式，忽略了 <Form.Item> 标签的 `name` 属性,结果导致双向绑定不生效。
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+解决: 仔细阅读 antd 官方文档后发现，如果 <Form.Item> 指定了 `name` 属性，则不需要使用 onChange 和 vlaue 的这种方式进行数据绑定。 我是直接用第二种方式，也就是 onChange 的这种方式，然后把 name 属性去掉就解决了。
 
-### `yarn test`
+> 引用官方解释
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  ```
+    被设置了 name 属性的 Form.Item 包装的控件，表单控件会自动添加 value（或 valuePropName 指定的其他属性） onChange（或 trigger 指定的其他属性），数据同步将被 Form 接管，这会导致以下结果：
 
-### `yarn build`
+    1. 你不再需要也不应该用 onChange 来做数据收集同步（你可以使用 Form 的 onValuesChange），但还是可以继续监听 onChange 事件。
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    2. 你不能用控件的 value 或 defaultValue 等属性来设置表单域的值，默认值可以用 Form 里的 initialValues 来设置。注意 initialValues 不能被 setState 动态更新，你需要用 setFieldsValue 来更新。
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+    3. 你不应该用 setState，可以使用 form.setFieldsValue 来动态改变表单值。
+  ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+#### 2. 修改 store 中的数据后，刷新页面会重置
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+store 中的数据是不能持久化的，我是手动持久化的数据,存储到 sessionStorge 中. 看网上好像是有第三方库 redyx-presist 可以做持久化,并没有尝试.
