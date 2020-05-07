@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import { withRouter, Link, Route,Switch,Redirect } from "react-router-dom";
+import { withRouter, Link, Route, Switch, Redirect } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import { DesktopOutlined, UserOutlined } from "@ant-design/icons";
 
 import "./home.style.scss";
 import HeaderBar from "./header/HeaderBar";
-import Category from "./category/Category"
-import Recommend from './recommend/Recommend'
+import Category from "./category/Category";
+import Recommend from "./recommend/Recommend";
+import connect from "../login/redux/connect";
 
 const { Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -28,7 +29,6 @@ class Home extends Component {
   render() {
     return (
       <Layout style={{ minHeight: "100vh" }}>
-
         {/* 左侧菜单 */}
         <Sider
           collapsible
@@ -54,26 +54,21 @@ class Home extends Component {
             </Menu.Item>
           </Menu>
         </Sider>
-       
+
         {/* 右侧内容 */}
         <Layout className="site-layout">
-
           {/* 头部 */}
           <HeaderBar username={this.state.username}></HeaderBar>
 
           {/* 主要内容 */}
           <Content style={{ margin: "0 16px" }}>
-
             {/* 配置路由 */}
             <Switch>
               <Route path="/home/category" component={Category}></Route>
               <Route path="/home/datalist" component={Recommend}></Route>
               <Redirect exact from="/home" to="/home/category"></Redirect>
             </Switch>
-
           </Content>
-
-
 
           <Footer style={{ textAlign: "center" }}>
             Ant Design ©2018 Created by Ant UED
@@ -90,18 +85,17 @@ class Home extends Component {
 
   // 验证权限的方法
   auth() {
-    // 判断用户是否有权限
-    let userInfo = sessionStorage.getItem("userInfo");
-    if (userInfo) {
-      userInfo = JSON.parse(userInfo);
-      this.setState({
-        username: userInfo.username,
-      });
+    // 判断用户是否已经登录
+    let isLogin = JSON.parse(sessionStorage.getItem("isLogin"));
+    if (isLogin) {
+      // 已经登录
+      let { username } = JSON.parse(sessionStorage.getItem("userInfo"));
+      this.setState({ username });
     } else {
-      // 没有权限，跳转到 登录
+      // 没有登录则跳转到登录页面
       this.props.history.push("/login");
     }
   }
 }
 
-export default withRouter(Home);
+export default withRouter(connect(Home));

@@ -3,16 +3,18 @@ import { Form, Input, Button, Checkbox, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import "./login.style.scss";
 import { post } from "../../utils/http";
-import {withRouter} from 'react-router-dom'
+import { withRouter } from "react-router-dom";
+
+import connect from "./redux/connect";
 
 class Login extends Component {
   constructor() {
     super();
     this.state = {
-      username: "",  // 用户名
-      password: "",  // 密码
-      isChecked: true,  // 是否记住密码
-      isLoading: false,  // loading 的状态
+      username: "", // 用户名
+      password: "", // 密码
+      isChecked: true, // 是否记住密码
+      isLoading: false, // loading 的状态
     };
   }
 
@@ -44,13 +46,36 @@ class Login extends Component {
     // 处理响应信息
     if (result.data.code === 1) {
       let { username, password, isChecked } = this.state;
-      // 登录成功，存储用户信息
+
+      // 改变 store 中的数据
+      this.props.changeLoginState(true);
+
+      // 如果勾选了 记住密码
       if (isChecked) {
+        // 存储用户的所有信息
         sessionStorage.setItem(
           "userInfo",
-          JSON.stringify({ username, password, isChecked })
+          JSON.stringify({
+            username,
+            password,
+            isChecked,
+          })
         );
+        // 存储登录的状态
+        sessionStorage.setItem("isLogin", this.props.isLogin);
+      } else {
+        // 没有勾选记住密码
+        sessionStorage.setItem(
+          "userInfo",
+          JSON.stringify({
+            username,
+            isChecked,
+          })
+        );
+        // 存储登录的状态
+        sessionStorage.setItem("isLogin", this.props.isLogin);
       }
+
       // 在跳转之前改变 loading 的状态
       this.setState({ isLoading: false });
       // 跳转到首页
@@ -122,6 +147,28 @@ class Login extends Component {
       </div>
     );
   }
+
+  componentDidMount() {
+    this.getUserInfo();
+  }
+
+  getUserInfo() {
+    // 获取 sessionStorage 中的用户信息
+    let sessionData = sessionStorage.getItem("userInfo");
+    // 如果用户信息存在
+    if (sessionData) {
+      // 解构出来
+      let { isChecked, username, password } = JSON.parse(sessionData);
+      // 判断存储的 记住密码 的状态
+      if (isChecked) {
+        // 自动填写表单
+        this.setState({ username, password, isChecked });
+      } else {
+        // 只修改 记住密码 的状态
+        this.setState({ isChecked });
+      }
+    }
+  }
 }
 
-export default withRouter(Login);
+export default withRouter(connect(Login));

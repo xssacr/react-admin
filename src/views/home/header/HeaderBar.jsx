@@ -15,7 +15,7 @@ class HeaderBar extends Component {
         okText:'确定',
         onOk: () => {
           // 清除 cookie 的数据
-          sessionStorage.removeItem('userInfo');
+          sessionStorage.removeItem('isLogin')
           // 退出成功的提示
           message.success('退出成功!')
           // 跳转到 登录
