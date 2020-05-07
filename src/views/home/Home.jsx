@@ -1,12 +1,14 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link, Route,Switch,Redirect } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import { DesktopOutlined, UserOutlined } from "@ant-design/icons";
 
 import "./home.style.scss";
-import HeaderBar from './HeaderBar'
+import HeaderBar from "./header/HeaderBar";
+import Category from "./category/Category"
+import Recommend from './recommend/Recommend'
 
-const {  Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
 class Home extends Component {
@@ -17,6 +19,7 @@ class Home extends Component {
       collapsed: false,
     };
   }
+
   onCollapse = (collapsed) => {
     console.log(collapsed);
     this.setState({ collapsed });
@@ -25,33 +28,53 @@ class Home extends Component {
   render() {
     return (
       <Layout style={{ minHeight: "100vh" }}>
+
+        {/* 左侧菜单 */}
         <Sider
           collapsible
           collapsed={this.state.collapsed}
           onCollapse={this.onCollapse}
         >
-          <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-            <Menu.Item key="1" icon={<UserOutlined />}>
+          <Menu
+            theme="dark"
+            defaultSelectedKeys={["category"]}
+            openKeys={["datas"]}
+            mode="inline"
+          >
+            <SubMenu key="datas" icon={<DesktopOutlined />} title="数据管理">
+              <Menu.Item key="category">
+                <Link to="/home/category">菜谱分类管理</Link>
+              </Menu.Item>
+              <Menu.Item key="datalist">
+                <Link to="/home/datalist">推荐数据管理</Link>
+              </Menu.Item>
+            </SubMenu>
+            <Menu.Item key="users" icon={<UserOutlined />}>
               用户管理
             </Menu.Item>
-            <SubMenu key="sub2" icon={<DesktopOutlined />} title="数据管理">
-              <Menu.Item key="6">菜谱分类管理</Menu.Item>
-              <Menu.Item key="8">推荐数据管理</Menu.Item>
-            </SubMenu>
           </Menu>
         </Sider>
+       
+        {/* 右侧内容 */}
         <Layout className="site-layout">
 
+          {/* 头部 */}
           <HeaderBar username={this.state.username}></HeaderBar>
-         
+
+          {/* 主要内容 */}
           <Content style={{ margin: "0 16px" }}>
-            <div
-              className="site-layout-background"
-              style={{ padding: 24, minHeight: 360 }}
-            >
-              Bill is a cat.
-            </div>
+
+            {/* 配置路由 */}
+            <Switch>
+              <Route path="/home/category" component={Category}></Route>
+              <Route path="/home/datalist" component={Recommend}></Route>
+              <Redirect exact from="/home" to="/home/category"></Redirect>
+            </Switch>
+
           </Content>
+
+
+
           <Footer style={{ textAlign: "center" }}>
             Ant Design ©2018 Created by Ant UED
           </Footer>
