@@ -1,0 +1,23 @@
+.cate-container{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .cate-search{
+    height: 60px;
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    button{
+      margin-right: 20px;
+    }
+  }
+  .ant-table-wrapper{
+    flex: 1;
+  }
+}
+
+.icon-img{
+  width:80px;
+  height: 60px;
+  display: block;
+}
