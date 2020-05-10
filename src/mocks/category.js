@@ -35,5 +35,19 @@ Mock.mock('/api/category/getlist', "post", params => {
     total: datalist.length,
     datalist: result
   };
+})
 
+Mock.mock('/api/category/delByKey', "post", params => {
+  let { key } = JSON.parse(params.body);
+
+  datalist.map((item,index) => {
+    if (item.key === key) {
+      datalist.splice(index,1)
+    }
+  })
+
+  return {
+    code: 1,
+    message:'删除分类成功!'
+  };
 })

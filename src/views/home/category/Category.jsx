@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Table, Button, Input } from "antd";
+import { Table, Button, Input, Popconfirm, message } from "antd";
 import "./category.style.scss";
 import { post } from "../../../utils/http";
 
@@ -36,7 +36,18 @@ export default class Category extends Component {
     return (
       <div className="cate-container">
         <div className="cate-search">
-          <Button type="primary">添加</Button>
+          <Button
+            type="primary"
+            onClick={() =>
+              this.setState({
+                isShowModal: true,
+                modalTitle: "添加分类",
+                modalType: "add",
+              })
+            }
+          >
+            添加
+          </Button>
           <Input.Search
             placeholder="请输入分类名称"
             onSearch={this.searchHandler}
@@ -73,13 +84,26 @@ export default class Category extends Component {
             title="操作"
             dataIndex="handler"
             key="handler"
-            render={() => {
+            render={(text, record, index) => {
               return (
                 <>
-                  <Button type="primary">编辑</Button> &nbsp;
-                  <Button type="primary" danger>
-                    删除
+                  <Button
+                    type="primary"
+                    // onClick={this.editCategory.bind(this, record)}
+                  >
+                    编辑
                   </Button>
+                  &nbsp;
+                  <Popconfirm
+                    title="确定要删除该分类吗?"
+                    okText="是"
+                    cancelText="否"
+                    onConfirm={this.delCategory.bind(this, record.key)}
+                  >
+                    <Button type="primary" danger>
+                      删除
+                    </Button>
+                  </Popconfirm>
                 </>
               );
             }}
@@ -93,10 +117,12 @@ export default class Category extends Component {
     this.getList();
   }
 
+  // 搜索
   searchHandler = () => {
     this.getList();
   };
 
+  // 请求数据
   getList = async () => {
     this.setState({ isLoading: true });
     let result = await post("/api/category/getlist", {
@@ -110,4 +136,17 @@ export default class Category extends Component {
       total: result.data.total,
     });
   };
+
+  // 删除指定 key(id) 的数据
+  async delCategory(key) {
+    // 发送数据请求
+    let result = await post("/api/category/delByKey", { key });
+    if (result.data.code === 1) {
+      // 重新获取数据
+      this.getList();
+
+      //提示用户删除成功
+      message.success(result.data.message);
+    }
+  }
 }
