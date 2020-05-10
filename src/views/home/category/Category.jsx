@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Table, Button, Input, Popconfirm, message } from "antd";
+import { Table, Button, Input, Popconfirm, message, Modal, Form } from "antd";
 import "./category.style.scss";
+import moment from 'moment';
 import { post } from "../../../utils/http";
 
 export default class Category extends Component {
@@ -13,8 +14,22 @@ export default class Category extends Component {
       total: 1,
       pageno: 1,
       pagesize: 10,
+      addModalVisible: false, // 添加 Modal 的状态
+      editModalVisible: false, // 编辑 Modal 的状态
+      confirmLoading: false, // loading
+      add_name: "",
+      add_desc: "",
+      edit_name: "",
+      edit_desc: "",
     };
   }
+
+  changeValue = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
+
   render() {
     this.paginationSet = {
       total: this.state.total,
@@ -38,13 +53,7 @@ export default class Category extends Component {
         <div className="cate-search">
           <Button
             type="primary"
-            onClick={() =>
-              this.setState({
-                isShowModal: true,
-                modalTitle: "添加分类",
-                modalType: "add",
-              })
-            }
+            onClick={() => this.setState({ addModalVisible: true })}
           >
             添加
           </Button>
@@ -109,6 +118,37 @@ export default class Category extends Component {
             }}
           />
         </Table>
+
+        <Modal
+          title="添加菜谱"
+          visible={this.state.addModalVisible}
+          onOk={this.handleAdd}
+          okText="确定"
+          cancelText="取消"
+          confirmLoading={this.state.confirmLoading}
+          onCancel={() => this.setState({ addModalVisible: false })}
+        >
+          <Form
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 20 }}
+            layout="horizontal"
+          >
+            <Form.Item label="分类名称">
+              <Input
+                value={this.state.add_name}
+                name="add_name"
+                onChange={this.changeValue}
+              />
+            </Form.Item>
+            <Form.Item label="描述">
+              <Input.TextArea
+                value={this.state.add_desc}
+                name="add_desc"
+                onChange={this.changeValue}
+              />
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
     );
   }
@@ -149,4 +189,36 @@ export default class Category extends Component {
       message.success(result.data.message);
     }
   }
+
+  // 添加
+  handleAdd = async () => {
+    this.setState({ confirmLoading: true });
+    // 生成 key
+    let key = this.state.total + 1;
+
+    let { add_name, add_desc } = this.state;
+    // 发送请求
+    let result = await post("/api/category/addCategory", {
+      key,
+      name: add_name,
+      desc: add_desc,
+      create_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+    });
+
+    if (result.data.code === 1) {
+      // 关闭
+      this.setState(
+        {
+          confirmLoading: false,
+          addModalVisible: false,
+          add_name: '',
+          add_desc:''
+        },
+        () => {
+          this.getList();
+          message.success(result.data.message);
+        }
+      );
+    }
+  };
 }

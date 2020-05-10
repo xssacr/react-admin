@@ -9,7 +9,7 @@ function initData() {
       key: '@increment()',
       name: '@ctitle(2,4)',
       desc: '@ctitle(30,40)',
-      create_date: '@date(yyyy-MM-dd HH:ss:mm)'
+      create_date: '@date(yyyy-MM-dd HH:mm:ss)'
     }))
   }
 }
@@ -40,14 +40,30 @@ Mock.mock('/api/category/getlist', "post", params => {
 Mock.mock('/api/category/delByKey', "post", params => {
   let { key } = JSON.parse(params.body);
 
-  datalist.map((item,index) => {
+  datalist.map((item, index) => {
     if (item.key === key) {
-      datalist.splice(index,1)
+      datalist.splice(index, 1)
     }
   })
 
   return {
     code: 1,
-    message:'删除分类成功!'
+    message: '删除菜谱成功!'
   };
+})
+
+Mock.mock('/api/category/addCategory', "post", params => {
+  let newCategory = JSON.parse(params.body);
+  datalist.push(newCategory);
+
+  console.log(datalist
+  )
+  return {
+    code: 1,
+    message: '添加菜谱成功!'
+  }
+})
+
+Mock.mock('/api/category/editCategory', "post", params => {
+
 })
