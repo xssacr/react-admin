@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Table, Button, Input, Popconfirm, message, Modal, Form } from "antd";
 import "./category.style.scss";
-import moment from 'moment';
+import moment from "moment";
 import { post } from "../../../utils/http";
 
 export default class Category extends Component {
@@ -13,7 +13,7 @@ export default class Category extends Component {
       isLoading: false,
       total: 1,
       pageno: 1,
-      pagesize: 10,
+      pagesize: 5,
       addModalVisible: false, // 添加 Modal 的状态
       editModalVisible: false, // 编辑 Modal 的状态
       confirmLoading: false, // loading
@@ -21,6 +21,7 @@ export default class Category extends Component {
       add_desc: "",
       edit_name: "",
       edit_desc: "",
+      edit_key: "",
     };
   }
 
@@ -98,7 +99,7 @@ export default class Category extends Component {
                 <>
                   <Button
                     type="primary"
-                    // onClick={this.editCategory.bind(this, record)}
+                    onClick={this.clickEdit.bind(this, record)}
                   >
                     编辑
                   </Button>
@@ -149,6 +150,41 @@ export default class Category extends Component {
             </Form.Item>
           </Form>
         </Modal>
+
+        <Modal
+          title="编辑菜谱"
+          visible={this.state.editModalVisible}
+          onOk={this.handleEdit}
+          okText="确定"
+          cancelText="取消"
+          confirmLoading={this.state.confirmLoading}
+          onCancel={() => this.setState({ editModalVisible: false })}
+        >
+          <Form
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 20 }}
+            layout="horizontal"
+          >
+            <Form.Item label="编号">
+              <Input value={this.state.edit_key} disabled />
+            </Form.Item>
+
+            <Form.Item label="分类名称">
+              <Input
+                value={this.state.edit_name}
+                name="edit_name"
+                onChange={this.changeValue}
+              />
+            </Form.Item>
+            <Form.Item label="描述">
+              <Input.TextArea
+                value={this.state.edit_desc}
+                name="edit_desc"
+                onChange={this.changeValue}
+              />
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
     );
   }
@@ -194,7 +230,7 @@ export default class Category extends Component {
   handleAdd = async () => {
     this.setState({ confirmLoading: true });
     // 生成 key
-    let key = this.state.total + 1;
+    let key = Math.floor(Math.random() * 10000 + 10000);
 
     let { add_name, add_desc } = this.state;
     // 发送请求
@@ -202,7 +238,7 @@ export default class Category extends Component {
       key,
       name: add_name,
       desc: add_desc,
-      create_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+      create_date: moment().format("YYYY-MM-DD HH:mm:ss"),
     });
 
     if (result.data.code === 1) {
@@ -211,8 +247,44 @@ export default class Category extends Component {
         {
           confirmLoading: false,
           addModalVisible: false,
-          add_name: '',
-          add_desc:''
+          add_name: "",
+          add_desc: "",
+        },
+        () => {
+          this.getList();
+          message.success(result.data.message);
+        }
+      );
+    }
+  };
+
+  // 点击修改按钮时
+  clickEdit(record) {
+    let { key, name, desc } = record;
+    this.setState({
+      editModalVisible: true,
+      edit_key: key,
+      edit_name: name,
+      edit_desc: desc,
+    });
+  }
+
+  // 修改菜谱的逻辑
+  handleEdit = async () => {
+    this.setState({confirmLoading:true})
+    let { edit_key, edit_name, edit_desc } = this.state;
+    let result = await post("/api/category/editCategory", {
+      key: edit_key,
+      name: edit_name,
+      desc: edit_desc,
+      create_date: moment().format("YYYY-MM-DD HH:mm:ss"),
+    });
+
+    if (result.data.code === 1) {
+      this.setState(
+        {
+          confirmLoading: false,
+          editModalVisible: false,
         },
         () => {
           this.getList();

@@ -6,7 +6,7 @@ let datalist = [];
 function initData() {
   for (let i = 0; i < 5; i++) {
     datalist.push(Mock.mock({
-      key: '@increment()',
+      'key|10000-30000': 18444,
       name: '@ctitle(2,4)',
       desc: '@ctitle(30,40)',
       create_date: '@date(yyyy-MM-dd HH:mm:ss)'
@@ -18,7 +18,7 @@ initData();
 
 Mock.mock('/api/category/getlist', "post", params => {
   let { pageno, pagesize, keyword } = JSON.parse(params.body);
-  console.log(pageno)
+  console.log(datalist)
   let startIndex = (pageno - 1) * pagesize;
   let endIndex = startIndex + pagesize;
 
@@ -65,5 +65,19 @@ Mock.mock('/api/category/addCategory', "post", params => {
 })
 
 Mock.mock('/api/category/editCategory', "post", params => {
+  let { key, name, desc, create_date } = JSON.parse(params.body);
 
+  // 根据key 找到对应的数据
+  datalist.forEach(item => {
+    if (item.key === key) {
+      item.name = name
+      item.desc = desc
+      item.create_date = create_date
+    }
+  })
+
+  return {
+    code: 1,
+    message: '修改菜谱成功!'
+  }
 })
