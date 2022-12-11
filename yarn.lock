@@ -7260,14 +7260,9 @@ mockjs@^1.1.0:
   dependencies:
     commander "*"
 
-moment@^2.24.0:
+moment@^2.24.0, moment@^2.25.3:
   version "2.25.3"
   resolved "https://registry.npm.taobao.org/moment/download/moment-2.25.3.tgz#252ff41319cf41e47761a1a88cab30edfe9808c0"
-  integrity sha1-JS/0ExnPQeR3YaGojKsw7f6YCMA=
-
-moment@^2.25.3:
-  version "2.25.3"
-  resolved "https://registry.npm.taobao.org/moment/download/moment-2.25.3.tgz?cache=0&sync_timestamp=1588605303253&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fmoment%2Fdownload%2Fmoment-2.25.3.tgz#252ff41319cf41e47761a1a88cab30edfe9808c0"
   integrity sha1-JS/0ExnPQeR3YaGojKsw7f6YCMA=
 
 move-concurrently@^1.0.1:
@@ -9019,9 +9014,9 @@ qs@6.7.0:
   integrity sha1-QdwaAV49WB8WIXdr4xr7KHapsbw=
 
 qs@~6.5.2:
-  version "6.5.2"
-  resolved "https://registry.npm.taobao.org/qs/download/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
-  integrity sha1-yzroBuh0BERYTvFUzo7pjUA/PjY=
+  version "6.5.3"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.3.tgz#3aeeffc91967ef6e35c0e488ef46fb296ab76aad"
+  integrity sha512-qxXIEh4pCGfHICj1mAJQ2/2XVZkjCDTcEgfoSQxc/fYivUZxTkk7L3bDBJSoNrEzXI17oUO5Dp07ktqE5KzczA==
 
 query-string@^4.1.0:
   version "4.3.4"
